@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วิเคราะห์พอร์ตการลงทุน — Value Investing</title>
+<style>
+@font-face{font-family:'Sarabun';font-style:normal;font-weight:400 800;src:local('Sarabun'),local('Sarabun-Regular');}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#EEF2F7 0%,#F5F0E8 100%);min-height:100vh;font-family:'Sarabun','Leelawadee UI','Leelawadee','Thonburi','Arial Unicode MS',sans-serif}
+#app{max-width:520px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.12)}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0B1F3A 0%,#0D2845 60%,#0F3060 100%);padding:32px 32px 28px;border-bottom:3px solid #C9A84C;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,.12) 0%,transparent 70%);transform:translate(40px,-40px)}
+.hdr-inner{display:flex;align-items:flex-start;gap:16px;position:relative}
+.hdr-icon{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#C9A84C,#E8C97A);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 4px 15px rgba(201,168,76,.4)}
+.badge{background:linear-gradient(90deg,#C9A84C,#E8C97A);color:#0B1F3A;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:1.5px}
+.badge2{border:1px solid rgba(201,168,76,.6);color:#E8C97A;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:1px}
+.badges{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h1.main{color:#fff;margin:8px 0 4px;font-size:22px;font-weight:800;line-height:1.3}
+.subtitle{color:#E8C97A;font-size:13px;font-weight:500}
+.hdr-footer{margin-top:20px;padding-top:16px;border-top:1px solid rgba(201,168,76,.3);display:flex;flex-wrap:wrap;gap:6px}
+.hdr-meta{color:#D4DCE8;font-size:11.5px;display:flex;align-items:center;gap:5px}
+.hdr-dot{color:#C9A84C;margin-left:4px}
+
+/* STEPS */
+.steps{display:flex;align-items:center;justify-content:center;padding:20px 24px;background:#F5F0E8;border-bottom:1px solid #D4DCE8;gap:0}
+.step-wrap{display:flex;align-items:center}
+.step-col{display:flex;flex-direction:column;align-items:center;gap:6px}
+.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;transition:all .3s}
+.step-line{width:60px;height:2px;margin:0 8px;margin-bottom:18px;transition:all .3s}
+.step-label{font-size:11px;white-space:nowrap;font-weight:400;color:#8A9BB0}
+.step-label.active{color:#0B1F3A;font-weight:700}
+
+/* CONTENT */
+.content{padding:28px 24px}
+h2.sec{color:#0B1F3A;font-size:18px;font-weight:800;margin-bottom:4px}
+p.sec-sub{color:#8A9BB0;font-size:13px;margin-bottom:24px;line-height:1.5}
+.field-label{display:block;font-size:14px;font-weight:700;color:#0B1F3A;margin-bottom:10px}
+.field-wrap{margin-bottom:22px}
+
+/* SELECT GRID */
+.sel-grid{display:grid;gap:10px}
+.sel-btn{padding:12px 14px;border-radius:10px;cursor:pointer;text-align:left;border:2px solid #D4DCE8;background:#fff;color:#0B1F3A;font-size:13px;font-family:'Sarabun','Leelawadee UI','Leelawadee','Thonburi','Arial Unicode MS',sans-serif;font-weight:500;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.sel-btn.active{border-color:#0B1F3A;background:#0B1F3A;color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(11,31,58,.3)}
+.sel-hint{font-size:10px;display:block;margin-bottom:3px;opacity:.7}
+.risk-hint{font-size:10px;color:#8A9BB0;margin-bottom:10px}
+
+/* BTN */
+.btn{width:100%;padding:14px;border-radius:10px;border:none;font-size:15px;font-weight:800;font-family:'Sarabun','Leelawadee UI','Leelawadee','Thonburi','Arial Unicode MS',sans-serif;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,#0B1F3A,#1a3a6b);color:#fff;box-shadow:0 4px 15px rgba(11,31,58,.4)}
+.btn-primary:disabled{background:#D4DCE8;color:#8A9BB0;cursor:not-allowed;box-shadow:none}
+.btn-gold{background:linear-gradient(135deg,#C9A84C,#B8860B);color:#0B1F3A;box-shadow:0 4px 15px rgba(201,168,76,.5)}
+.btn-gold:disabled{background:#D4DCE8;color:#8A9BB0;cursor:not-allowed;box-shadow:none}
+.btn-outline{background:#fff;border:2px solid #D4DCE8!important;color:#0B1F3A;font-weight:700}
+.btn-row{display:flex;gap:10px}
+.btn-row .btn{flex:1}
+
+/* PORTFOLIO INPUT */
+.total-bar{border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;border:1.5px solid}
+.asset-row{display:flex;align-items:center;gap:12px;border:1.5px solid #D4DCE8;border-radius:10px;padding:10px 14px;margin-bottom:8px;transition:all .2s;background:#fff}
+.asset-row.has-val{background:rgba(11,31,58,.05);border-color:rgba(11,31,58,.3)}
+.asset-icon{font-size:22px;flex-shrink:0}
+.asset-name{flex:1;font-size:13.5px;font-weight:500;color:#0B1F3A}
+.asset-name.has-val{font-weight:700}
+.asset-input{width:60px;padding:6px 10px;border-radius:8px;border:1.5px solid #D4DCE8;font-size:14px;font-weight:700;text-align:center;font-family:'Sarabun','Leelawadee UI','Leelawadee','Thonburi','Arial Unicode MS',sans-serif;outline:none;color:#0B1F3A}
+.asset-input.has-val{border-color:#0B1F3A}
+.pct-label{font-size:13px;color:#8A9BB0}
+
+/* RESULTS */
+.score-wrap{display:flex;gap:16px;margin-bottom:20px;align-items:flex-start}
+.score-ring-outer{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.score-badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.mini-bars{flex:1}
+.mini-bar-label{display:flex;justify-content:space-between;margin-bottom:4px}
+.mini-bar-label span{font-size:12px;color:#0B1F3A}
+.mini-bar-track{height:6px;border-radius:3px;background:#D4DCE8;overflow:hidden;margin-bottom:8px}
+.mini-bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+.summary-box{background:rgba(11,31,58,.05);border:1.5px solid rgba(11,31,58,.2);border-radius:12px;padding:16px;margin-bottom:16px}
+.summary-box p{font-size:13px;color:#0B1F3A;line-height:1.7}
+
+.section-title{font-size:13px;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.card-green{background:#E8F5EE;border-left:3px solid #1A6B3C;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:6px;font-size:13px;color:#0B1F3A;line-height:1.5}
+.card-orange{background:#FFF4E8;border-left:3px solid #E07B00;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:6px;font-size:13px;color:#0B1F3A;line-height:1.5}
+.rec-row{display:flex;gap:10px;align-items:flex-start;background:rgba(11,31,58,.06);border:1px solid rgba(11,31,58,.15);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.rec-num{width:22px;height:22px;border-radius:50%;background:#0B1F3A;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rec-text{font-size:13px;color:#0B1F3A;line-height:1.6}
+
+.prof-tags{background:rgba(11,31,58,.08);border:1px solid rgba(11,31,58,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px}
+.prof-tag{background:#0B1F3A;color:#fff;font-size:11.5px;padding:4px 10px;border-radius:20px;font-weight:600}
+
+.result-footer{background:linear-gradient(135deg,#0B1F3A,#1a3a6b);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.result-footer span{font-size:11px}
+
+canvas#scoreCanvas{display:block}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-inner">
+      <div class="hdr-icon">💼</div>
+      <div>
+        <div class="badges">
+          <span class="badge">โครงการบัณฑิตพันธุ์ใหม่</span>
+          <span class="badge2">Wealth Management Program</span>
+        </div>
+        <h1 class="main">วิเคราะห์พอร์ตการลงทุน</h1>
+        <p class="subtitle">Value Investing Portfolio Analyzer</p>
+      </div>
+    </div>
+    <div class="hdr-footer">
+      <span class="hdr-meta">👨‍🏫 ผศ.ดร.สมภูมิ แสวงกุล<span class="hdr-dot">·</span></span>
+      <span class="hdr-meta">🏛️ สาขาวิชาเศรษฐศาสตร์ธุรกิจ คณะวิทยาการจัดการ<span class="hdr-dot">·</span></span>
+      <span class="hdr-meta">🎓 มหาวิทยาลัยราชภัฏสวนสุนันทา</span>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps" id="stepBar">
+    <div class="step-wrap">
+      <div class="step-col">
+        <div class="step-num" id="s0">1</div>
+        <span class="step-label" id="sl0">ข้อมูลนักลงทุน</span>
+      </div>
+      <div class="step-line" id="line01"></div>
+      <div class="step-col">
+        <div class="step-num" id="s1">2</div>
+        <span class="step-label" id="sl1">กรอกพอร์ต</span>
+      </div>
+      <div class="step-line" id="line12"></div>
+      <div class="step-col">
+        <div class="step-num" id="s2">3</div>
+        <span class="step-label" id="sl2">ผลวิเคราะห์</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div id="page0" class="content"></div>
+  <div id="page1" class="content" style="display:none"></div>
+  <div id="page2" class="content" style="display:none"></div>
+</div>
+
+<script>
+// ── DATA ──
+const ASSETS = [
+  {id:'stock_th',   label:'หุ้นไทย (SET)',              icon:'📈', viScore:10},
+  {id:'stock_fo',   label:'หุ้นต่างประเทศ',             icon:'🌏', viScore:9},
+  {id:'etf',        label:'ETF / Index Fund',           icon:'📊', viScore:8},
+  {id:'reit',       label:'REITs / กองทุนอสังหาฯ',      icon:'🏢', viScore:7},
+  {id:'bond',       label:'ตราสารหนี้ / พันธบัตร',      icon:'📜', viScore:5},
+  {id:'gold',       label:'ทองคำ',                      icon:'🥇', viScore:3},
+  {id:'cash',       label:'เงินสด / Money Market',      icon:'💵', viScore:4},
+  {id:'crypto',     label:'สินทรัพย์ดิจิทัล',           icon:'₿',  viScore:1},
+  {id:'property',   label:'อสังหาริมทรัพย์',            icon:'🏠', viScore:6},
+];
+const AGE_GROUPS = ['20–29 ปี','30–39 ปี','40–49 ปี','50–59 ปี','60 ปีขึ้นไป'];
+const GOALS = ['สะสมความมั่งคั่งระยะยาว','รับรายได้ Passive Income','เตรียมเกษียณ','รักษาเงินต้น'];
+const HORIZONS = ['น้อยกว่า 3 ปี','3–10 ปี','10 ปีขึ้นไป'];
+const RISK_Q = 'ถ้าพอร์ตของคุณติดลบ 20% ในช่วง 3 เดือน คุณจะทำอะไร?';
+const RISK_OPTS = [
+  {label:'ขายทันทีเพื่อหยุดขาดทุน',level:'ต่ำ'},
+  {label:'รอดูสถานการณ์ก่อน',level:'กลาง'},
+  {label:'ถือต่อและรอฟื้น',level:'สูง'},
+  {label:'ซื้อเพิ่มเพราะราคาถูกลง',level:'สูงมาก'},
+];
+
+// ── STATE ──
+let state = {
+  step: 0,
+  profile: {age:'',goal:'',horizon:'',risk:''},
+  portfolio: {},
+  analysis: null
+};
+
+// ── ENGINE ──
+function compute(profile, portfolio) {
+  const equity = (portfolio.stock_th||0)+(portfolio.stock_fo||0)+(portfolio.etf||0);
+  const defensive = (portfolio.bond||0)+(portfolio.gold||0)+(portfolio.cash||0);
+  const income = (portfolio.reit||0)+(portfolio.property||0);
+  const crypto = portfolio.crypto||0;
+  const cash = portfolio.cash||0;
+  const activeCount = ASSETS.filter(a=>(portfolio[a.id]||0)>0).length;
+
+  const baseScore = ASSETS.reduce((s,a)=>s+(portfolio[a.id]||0)*a.viScore,0)/10;
+  let adj = 0;
+
+  if(profile.horizon==='10 ปีขึ้นไป'&&equity>50) adj+=10;
+  if(profile.horizon==='10 ปีขึ้นไป'&&equity>=30) adj+=5;
+  if(profile.horizon==='3–10 ปี'&&equity>=30&&equity<=70) adj+=5;
+  if(profile.horizon==='น้อยกว่า 3 ปี'&&equity>50) adj-=15;
+  if(profile.horizon==='น้อยกว่า 3 ปี'&&equity>30) adj-=7;
+  if(profile.risk==='ขายทันทีเพื่อหยุดขาดทุน'&&equity>60) adj-=12;
+  if(profile.risk==='ขายทันทีเพื่อหยุดขาดทุน'&&equity>40) adj-=6;
+  if(profile.risk==='ถือต่อและรอฟื้น'&&equity>40) adj+=5;
+  if(profile.risk==='ซื้อเพิ่มเพราะราคาถูกลง'&&equity>50) adj+=8;
+  if(profile.goal==='สะสมความมั่งคั่งระยะยาว'&&equity>50) adj+=8;
+  if(profile.goal==='รับรายได้ Passive Income'&&income>=20) adj+=8;
+  if(profile.goal==='รับรายได้ Passive Income'&&income<10) adj-=5;
+  if(profile.goal==='รักษาเงินต้น'&&defensive>=50) adj+=8;
+  if(profile.goal==='รักษาเงินต้น'&&crypto>5) adj-=10;
+  if(profile.goal==='รักษาเงินต้น'&&equity>50) adj-=8;
+  if(profile.goal==='เตรียมเกษียณ'&&defensive>=30&&equity>=20) adj+=6;
+  const nearRet = ['50–59 ปี','60 ปีขึ้นไป'].includes(profile.age);
+  const young   = ['20–29 ปี','30–39 ปี'].includes(profile.age);
+  if(nearRet&&equity>70) adj-=8;
+  if(nearRet&&defensive>=40) adj+=5;
+  if(young&&equity>=50&&profile.horizon==='10 ปีขึ้นไป') adj+=5;
+  if(activeCount>=5) adj+=8; else if(activeCount>=4) adj+=5; else if(activeCount<=2) adj-=8;
+  if(crypto>20) adj-=15; else if(crypto>10) adj-=8; else if(crypto>5) adj-=3;
+  if(cash>40) adj-=8; else if(cash>30) adj-=4;
+
+  const score = Math.min(100,Math.max(0,Math.round(baseScore+adj)));
+
+  // strengths
+  const str=[];
+  if(equity>50) str.push(`พอร์ตมีสัดส่วนหุ้น/ETF รวม ${equity}% เหมาะกับการสร้างความมั่งคั่งระยะยาวผ่านหลัก Long-term Compounding และการลงทุนในบริษัทที่มี Economic Moat`);
+  if(defensive>=20) str.push(`มี Defensive Assets (ตราสารหนี้/ทองคำ/เงินสด) คิดเป็น ${defensive}% ทำหน้าที่เป็น Margin of Safety ช่วยกันชนความผันผวนและรักษาเงินต้นในวิกฤต`);
+  if(income>0) str.push(`มีสินทรัพย์สร้าง Passive Income (REITs/อสังหาฯ รวม ${income}%) สร้าง Cash Flow สม่ำเสมอโดยไม่ต้องขายสินทรัพย์`);
+  if(activeCount>=4) str.push(`กระจายลงทุนใน ${activeCount} ประเภทสินทรัพย์ ลด Unsystematic Risk และสร้างความสมดุลระหว่าง Growth กับ Stability`);
+  if(profile.horizon==='10 ปีขึ้นไป'&&equity>=30) str.push(`ระยะเวลาลงทุนยาวกว่า 10 ปี ทำให้ผลของ Compounding เด่นชัด และมีเวลาฟื้นตัวจากความผันผวนระยะสั้น`);
+  if(portfolio.etf>0) str.push(`มี ETF/Index Fund ในพอร์ต ช่วยกระจายความเสี่ยงในสินทรัพย์เดียวต้นทุนต่ำ สอดคล้องกับ Passive Value Investing`);
+  const strengths = str.slice(0,3);
+  if(!strengths.length) strengths.push('พอร์ตมีจุดเริ่มต้นที่ดี มีการถือสินทรัพย์หลายประเภท ซึ่งเป็นพื้นฐานสำคัญของการลงทุนแบบ Value Investing');
+
+  // weaknesses
+  const wk=[];
+  if(crypto>10) wk.push(`สินทรัพย์ดิจิทัล ${crypto}% สูงเกินเกณฑ์ที่แนะนำ (ไม่เกิน 5%) ความผันผวนสูงมาก ขัดกับหลัก Margin of Safety และ Capital Preservation`);
+  if(profile.horizon==='น้อยกว่า 3 ปี'&&equity>50) wk.push(`ระยะเวลาลงทุนสั้น (<3 ปี) แต่มีสัดส่วนหุ้น/ETF สูงถึง ${equity}% เสี่ยงต่อ Market Timing หากต้องถอนเงินในช่วงตลาดขาลง`);
+  if(profile.risk==='ขายทันทีเพื่อหยุดขาดทุน'&&equity>50) wk.push(`ระดับความเสี่ยงที่รับได้ต่ำ แต่พอร์ตมีหุ้น ${equity}% หากตลาดผันผวนอาจตัดสินใจ Panic Sell ในจังหวะที่ผิด`);
+  if(activeCount<=2) wk.push(`Concentration Risk สูง — ลงทุนเพียง ${activeCount} ประเภทสินทรัพย์ หากสินทรัพย์หลักปรับตัวลงแรงจะกระทบพอร์ตโดยตรงโดยไม่มีตัวกันชน`);
+  if(cash>30) wk.push(`เงินสด/Money Market สูงถึง ${cash}% ผลตอบแทนแพ้ Inflation ในระยะยาว ทำให้เสียโอกาสสะสม Compounding Effect`);
+  if(profile.goal==='รักษาเงินต้น'&&equity>50) wk.push(`เป้าหมายรักษาเงินต้น แต่หุ้น/ETF สูงถึง ${equity}% ยังมีความเสี่ยงขาดทุนเงินต้นในระยะสั้นจากความผันผวนของตลาด`);
+  if(nearRet&&equity>70) wk.push(`ใกล้เกษียณ แต่สัดส่วนหุ้นสูงถึง ${equity}% ควรลดความเสี่ยงลงเพื่อปกป้องความมั่งคั่งที่สะสมมา`);
+  if(income===0&&profile.goal==='รับรายได้ Passive Income') wk.push('เป้าหมายต้องการ Passive Income แต่ยังไม่มีสินทรัพย์สร้าง Cash Flow (REITs/อสังหาฯ) ในพอร์ตเลย');
+  const weaknesses = wk.slice(0,3);
+  if(!weaknesses.length) weaknesses.push('พอร์ตมีความสมดุลพอสมควร แนะนำให้ทบทวนสัดส่วนทุก 6 เดือนเพื่อให้สอดคล้องกับเป้าหมายที่เปลี่ยนไปตามช่วงชีวิต');
+
+  // recs
+  const recs=[];
+  if(crypto>10) recs.push(`ลดสัดส่วนสินทรัพย์ดิจิทัลจาก ${crypto}% ให้เหลือไม่เกิน 5% แล้วนำส่วนที่ลดไปเพิ่มใน ETF หรือตราสารหนี้ เพื่อเพิ่ม Margin of Safety ของพอร์ต`);
+  else if(activeCount<=2) recs.push(`เพิ่มการกระจายความเสี่ยงโดยเพิ่มสินทรัพย์ประเภทอื่นอีก 2–3 ประเภท เช่น REITs หรือตราสารหนี้ เพื่อลด Concentration Risk และสร้าง Buffer เมื่อตลาดผันผวน`);
+  else if(cash>35) recs.push(`นำเงินสดส่วนเกิน (เกิน 20%) ไปลงทุนใน ETF หรือตราสารหนี้อย่างน้อยเดือนละครั้งด้วยวิธี DCA เพื่อต่อสู้กับ Inflation และเพิ่ม Compounding`);
+  else if(equity<30&&profile.goal==='สะสมความมั่งคั่งระยะยาว') recs.push(`เพิ่มสัดส่วนหุ้น/ETF ให้ถึง 40–60% เพราะเป้าหมายสะสมความมั่งคั่งระยะยาวต้องการ Growth Asset ที่ Compounding ได้สูง`);
+  else recs.push(`ทบทวนและ Rebalance พอร์ตทุก 6 เดือน ให้สัดส่วนกลับมาสอดคล้องกับเป้าหมายที่ตั้งไว้ เพราะสัดส่วนจะเปลี่ยนตามการเคลื่อนไหวของตลาด`);
+
+  if(profile.goal==='รับรายได้ Passive Income'&&income<20) recs.push(`เพิ่มสัดส่วน REITs หรืออสังหาริมทรัพย์ให้ถึง 20–30% เพื่อสร้าง Cash Flow สม่ำเสมอ ตอบโจทย์เป้าหมาย Passive Income โดยตรง`);
+  else if(profile.goal==='รักษาเงินต้น'&&defensive<50) recs.push(`เพิ่มสัดส่วนตราสารหนี้/พันธบัตรให้ถึง 50–60% เพื่อลดความเสี่ยงให้สอดคล้องกับเป้าหมายรักษาเงินต้น ลดโอกาสขาดทุนระยะสั้น`);
+  else if(profile.horizon==='น้อยกว่า 3 ปี'&&equity>30) recs.push(`ระยะเวลาสั้น ควรค่อยๆ ลดหุ้นและเพิ่ม Bond/Money Market เพื่อรองรับการถอนเงินตามแผน และลดความเสี่ยง Timing`);
+  else if(nearRet&&equity>50) recs.push(`ใกล้เกษียณ ควรค่อยๆ เพิ่มตราสารหนี้และ REITs ลดหุ้นลงเพื่อปกป้องความมั่งคั่งที่สะสมมา และสร้างกระแสเงินสดหลังเกษียณ`);
+  else if(young&&equity<50) recs.push(`อายุยังน้อย ยังมีเวลาฟื้นตัวจากความผันผวน ควรเพิ่มสัดส่วนหุ้น/ETF ให้ถึง 50–70% เพื่อให้ Compounding ทำงานได้เต็มประสิทธิภาพ`);
+  else recs.push(`ศึกษาหลัก Dollar-Cost Averaging (DCA) โดยลงทุนในหุ้นหรือ ETF สม่ำเสมอทุกเดือนในจำนวนเท่ากัน เพื่อลดผลกระทบจากความผันผวนของตลาด`);
+
+  if(portfolio.stock_th>0||portfolio.stock_fo>0) recs.push(`เลือกหุ้นที่มี Economic Moat ชัดเจน เช่น ผู้นำตลาด กำไรสม่ำเสมอ และ ROE > 15% และซื้อเมื่อราคาต่ำกว่ามูลค่าที่แท้จริง (Intrinsic Value) เท่านั้น`);
+  else recs.push(`พิจารณาเพิ่ม ETF ดัชนีต้นทุนต่ำ เพื่อเข้าถึงผลตอบแทนตลาดรวมโดยไม่ต้องเลือกหุ้นเอง เหมาะกับหลักการ Passive Value Investing ที่ต้นทุนต่ำ`);
+
+  let summary = `นักลงทุนช่วงอายุ ${profile.age} มีเป้าหมาย${profile.goal} ระยะเวลา ${profile.horizon} `;
+  if(score>=70) summary += `พอร์ตนี้สอดคล้องกับหลัก Value Investing ในระดับสูง (VI Score ${score}/100) สะท้อนการจัดพอร์ตที่มีคุณภาพ แนะนำให้รักษาวินัยและ Rebalance เป็นระยะเพื่อรักษาระดับนี้ต่อไป`;
+  else if(score>=40) summary += `พอร์ตมีความสอดคล้องกับหลัก Value Investing ในระดับปานกลาง (VI Score ${score}/100) ยังมีจุดที่ปรับปรุงได้ โดยเฉพาะการจัดสมดุลระหว่าง Risk และ Return ให้เหมาะกับเป้าหมาย`;
+  else summary += `พอร์ตยังมีช่องว่างในการปรับให้สอดคล้องกับหลัก Value Investing (VI Score ${score}/100) ควรทบทวนโครงสร้างพอร์ตตามคำแนะนำเพื่อให้เหมาะสมกับเป้าหมายและระดับความเสี่ยงที่รับได้จริง`;
+
+  return {score,strengths,weaknesses,recommendations:recs,summary};
+}
+
+// ── RENDER STEPS ──
+function updateStepBar(cur) {
+  [0,1,2].forEach(i=>{
+    const el = document.getElementById('s'+i);
+    const lbl = document.getElementById('sl'+i);
+    if(i<cur){el.style.background='#1A6B3C';el.style.color='#fff';el.textContent='✓';}
+    else if(i===cur){el.style.background='#0B1F3A';el.style.color='#fff';el.textContent=i+1;}
+    else{el.style.background='#D4DCE8';el.style.color='#8A9BB0';el.textContent=i+1;}
+    lbl.className='step-label'+(i===cur?' active':'');
+  });
+  ['01','12'].forEach((pair,i)=>{
+    const line=document.getElementById('line'+pair);
+    line.style.background=i+1<=cur?'#1A6B3C':'#D4DCE8';
+  });
+}
+
+function selGrid(options, key, cols, isRisk) {
+  return `<div class="sel-grid" style="grid-template-columns:repeat(${cols},1fr)">
+    ${options.map((opt,i)=>{
+      const label = typeof opt==='string'?opt:opt.label;
+      const sel = state.profile[key]===label;
+      const hint = isRisk?`<span class="sel-hint">ความเสี่ยง: ${opt.level}</span>`:'';
+      return `<button class="sel-btn${sel?' active':''}" onclick="selectOpt('${key}','${label}')">${hint}${label}</button>`;
+    }).join('')}
+  </div>`;
+}
+
+function selectOpt(key, val) {
+  state.profile[key] = val;
+  renderPage0();
+}
+
+function renderPage0() {
+  const p = state.profile;
+  const valid = p.age&&p.goal&&p.horizon&&p.risk;
+  document.getElementById('page0').innerHTML = `
+    <h2 class="sec">ขั้นที่ 1 — ข้อมูลนักลงทุน</h2>
+    <p class="sec-sub">กรอกข้อมูลเบื้องต้นเพื่อให้ระบบวิเคราะห์ได้แม่นยำขึ้น</p>
+
+    <div class="field-wrap">
+      <label class="field-label">ช่วงอายุ</label>
+      ${selGrid(AGE_GROUPS,'age',3,false)}
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">เป้าหมายการลงทุน</label>
+      ${selGrid(GOALS,'goal',2,false)}
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">ระยะเวลาที่วางแผนลงทุน</label>
+      ${selGrid(HORIZONS,'horizon',3,false)}
+    </div>
+    <div class="field-wrap" style="margin-bottom:28px">
+      <label class="field-label">ความทนต่อความเสี่ยง</label>
+      <p class="risk-hint">${RISK_Q}</p>
+      ${selGrid(RISK_OPTS,'risk',2,true)}
+    </div>
+
+    <button class="btn btn-primary" ${valid?'':'disabled'} onclick="goToPage1()">
+      ถัดไป → กรอกพอร์ตการลงทุน
+    </button>
+  `;
+}
+
+function goToPage1() {
+  const p=state.profile;
+  if(!p.age||!p.goal||!p.horizon||!p.risk) return;
+  state.step=1;
+  updateStepBar(1);
+  document.getElementById('page0').style.display='none';
+  document.getElementById('page1').style.display='block';
+  renderPage1();
+}
+
+function getTotal() {
+  return ASSETS.reduce((s,a)=>s+(Number(state.portfolio[a.id])||0),0);
+}
+
+function updatePortfolio(id, val) {
+  state.portfolio[id] = Math.min(100,Math.max(0,Number(val)||0));
+  updateTotalBar();
+  // update input border
+  const inp = document.getElementById('inp_'+id);
+  const row = document.getElementById('row_'+id);
+  const nameEl = document.getElementById('name_'+id);
+  if(inp){
+    inp.classList.toggle('has-val', state.portfolio[id]>0);
+    row.classList.toggle('has-val', state.portfolio[id]>0);
+    nameEl.classList.toggle('has-val', state.portfolio[id]>0);
+  }
+  updateAnalyzeBtn();
+}
+
+function updateTotalBar() {
+  const total=getTotal();
+  const rem=100-total;
+  const bar=document.getElementById('totalBar');
+  if(!bar) return;
+  let bg,bdColor,msg,scoreColor;
+  if(rem===0){bg='#E8F5EE';bdColor='#1A6B3C';msg='✅ ครบ 100% พร้อมวิเคราะห์';scoreColor='#1A6B3C';}
+  else if(rem>0){bg='#FFF8E8';bdColor='#C9A84C';msg=`⚠️ เหลืออีก ${rem}%`;scoreColor='#C9A84C';}
+  else{bg='#FDE8E8';bdColor='#C0392B';msg=`❌ เกิน ${Math.abs(rem)}%`;scoreColor='#C0392B';}
+  bar.style.background=bg;
+  bar.style.borderColor=bdColor;
+  document.getElementById('barMsg').textContent=msg;
+  document.getElementById('barTotal').textContent=total+'%';
+  document.getElementById('barTotal').style.color=scoreColor;
+}
+
+function updateAnalyzeBtn() {
+  const total=getTotal();
+  const hasAny=ASSETS.some(a=>(state.portfolio[a.id]||0)>0);
+  const btn=document.getElementById('analyzeBtn');
+  if(!btn) return;
+  const ok=total===100&&hasAny;
+  btn.disabled=!ok;
+  btn.className='btn '+(ok?'btn-gold':'btn-gold');
+  btn.style.opacity=ok?'1':'0.5';
+  btn.style.cursor=ok?'pointer':'not-allowed';
+}
+
+function renderPage1() {
+  const rows = ASSETS.map(a=>{
+    const v = state.portfolio[a.id]||0;
+    return `<div class="asset-row${v>0?' has-val':''}" id="row_${a.id}">
+      <span class="asset-icon">${a.icon}</span>
+      <span class="asset-name${v>0?' has-val':''}" id="name_${a.id}">${a.label}</span>
+      <input class="asset-input${v>0?' has-val':''}" id="inp_${a.id}" type="number" min="0" max="100"
+        value="${v||''}" placeholder="0"
+        oninput="updatePortfolio('${a.id}',this.value)">
+      <span class="pct-label">%</span>
+    </div>`;
+  }).join('');
+
+  const total=getTotal();
+  const rem=100-total;
+  let bg='#FFF8E8',bd='#C9A84C',msg=`⚠️ เหลืออีก ${rem}%`,sc='#C9A84C';
+  if(rem===0){bg='#E8F5EE';bd='#1A6B3C';msg='✅ ครบ 100% พร้อมวิเคราะห์';sc='#1A6B3C';}
+  if(rem<0){bg='#FDE8E8';bd='#C0392B';msg=`❌ เกิน ${Math.abs(rem)}%`;sc='#C0392B';}
+
+  document.getElementById('page1').innerHTML = `
+    <h2 class="sec">ขั้นที่ 2 — กรอกสัดส่วนพอร์ตปัจจุบัน</h2>
+    <p class="sec-sub">ใส่สัดส่วน % ของแต่ละสินทรัพย์ให้รวมกันได้ครบ 100%</p>
+
+    <div class="total-bar" id="totalBar" style="background:${bg};border-color:${bd}">
+      <span id="barMsg" style="font-size:13px;color:#0B1F3A;font-weight:600">${msg}</span>
+      <span id="barTotal" style="font-size:20px;font-weight:800;color:${sc}">${total}%</span>
+    </div>
+
+    ${rows}
+
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn btn-outline" onclick="backToPage0()">← ย้อนกลับ</button>
+      <button class="btn btn-gold" id="analyzeBtn" ${total===100?'':'disabled'} style="flex:2;opacity:${total===100?1:0.5}" onclick="doAnalyze()">
+        ✨ วิเคราะห์พอร์ต
+      </button>
+    </div>
+  `;
+}
+
+function backToPage0() {
+  state.step=0;
+  updateStepBar(0);
+  document.getElementById('page1').style.display='none';
+  document.getElementById('page0').style.display='block';
+}
+
+function doAnalyze() {
+  const total=getTotal();
+  if(total!==100) return;
+  const btn=document.getElementById('analyzeBtn');
+  if(btn){btn.textContent='🔄 กำลังวิเคราะห์...';btn.disabled=true;}
+  setTimeout(()=>{
+    state.analysis = compute(state.profile, state.portfolio);
+    state.step=2;
+    updateStepBar(2);
+    document.getElementById('page1').style.display='none';
+    document.getElementById('page2').style.display='block';
+    renderPage2();
+  },600);
+}
+
+function drawRing(canvasId, score) {
+  const c = document.getElementById(canvasId);
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const cx=60,cy=60,r=50,lw=10;
+  const color = score>=70?'#1A6B3C':score>=40?'#C9A84C':'#C0392B';
+  ctx.clearRect(0,0,120,120);
+  // bg ring
+  ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,Math.PI*1.5);
+  ctx.strokeStyle='#D4DCE8';ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();
+  // filled arc
+  const endAngle = -Math.PI/2 + (score/100)*Math.PI*2;
+  ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,endAngle);
+  ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();
+  // score text
+  ctx.fillStyle=color;ctx.font='bold 22px Sarabun,"Leelawadee UI",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(score,cx,cy-6);
+  ctx.fillStyle='#8A9BB0';ctx.font='11px Sarabun,"Leelawadee UI",sans-serif';
+  ctx.fillText('/100',cx,cy+13);
+}
+
+function renderPage2() {
+  const {score,strengths,weaknesses,recommendations,summary} = state.analysis;
+  const p = state.profile;
+  const port = state.portfolio;
+  const activeAssets = ASSETS.filter(a=>(port[a.id]||0)>0);
+  const scoreColor = score>=70?'#1A6B3C':score>=40?'#C9A84C':'#C0392B';
+  const scoreLabel = score>=70?'สอดคล้อง VI สูง':score>=40?'สอดคล้อง VI ปานกลาง':'ควรปรับปรุง';
+
+  const miniBarColor = v => {
+    const asset = ASSETS.find(a=>port[a.id]===v);
+    return '#8A9BB0';
+  };
+  const barColor = a => a.viScore>=7?'#1A6B3C':a.viScore>=4?'#C9A84C':'#C0392B';
+
+  const bars = activeAssets.map(a=>`
+    <div class="mini-bar-label">
+      <span>${a.label}</span><span style="font-weight:700;color:${barColor(a)}">${port[a.id]}%</span>
+    </div>
+    <div class="mini-bar-track">
+      <div class="mini-bar-fill" style="width:${port[a.id]}%;background:${barColor(a)}"></div>
+    </div>
+  `).join('');
+
+  const strHTML = strengths.map(s=>`<div class="card-green">${s}</div>`).join('');
+  const wkHTML  = weaknesses.map(w=>`<div class="card-orange">${w}</div>`).join('');
+  const recHTML = recommendations.map((r,i)=>`
+    <div class="rec-row">
+      <div class="rec-num">${i+1}</div>
+      <div class="rec-text">${r}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('page2').innerHTML = `
+    <h2 class="sec">ผลการวิเคราะห์พอร์ต</h2>
+    <p class="sec-sub" style="margin-bottom:20px">วิเคราะห์ตามหลักการ Value Investing · สอดคล้องกับ profile นักลงทุน</p>
+
+    <div class="prof-tags">
+      <span class="prof-tag">${p.age}</span>
+      <span class="prof-tag">${p.goal}</span>
+      <span class="prof-tag">${p.horizon}</span>
+    </div>
+
+    <div class="score-wrap">
+      <div class="score-ring-outer">
+        <canvas id="scoreCanvas" width="120" height="120"></canvas>
+        <span class="score-badge" style="color:${scoreColor};background:${scoreColor}20">${scoreLabel}</span>
+      </div>
+      <div class="mini-bars">${bars}</div>
+    </div>
+
+    <div class="summary-box"><p>${summary}</p></div>
+
+    <p class="section-title" style="color:#1A6B3C">✅ จุดแข็งของพอร์ต</p>
+    ${strHTML}
+
+    <p class="section-title" style="color:#B35A00;margin-top:14px">⚠️ จุดที่ควรระวัง</p>
+    ${wkHTML}
+
+    <p class="section-title" style="color:#0B1F3A;margin-top:14px">💡 คำแนะนำปฏิบัติได้เลย</p>
+    <div style="margin-bottom:20px">${recHTML}</div>
+
+    <div class="result-footer">
+      <span style="color:#E8C97A">🎓 Value Investing for Wealth Management · SSRU</span>
+      <span style="color:#8A9BB0">Rule-Based VI Analysis</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="backToPage1()">← แก้ไขพอร์ต</button>
+      <button class="btn btn-primary" onclick="resetAll()">🔄 เริ่มใหม่</button>
+    </div>
+  `;
+
+  // draw canvas after render
+  setTimeout(()=>drawRing('scoreCanvas',score),50);
+}
+
+function backToPage1() {
+  state.step=1;
+  updateStepBar(1);
+  document.getElementById('page2').style.display='none';
+  document.getElementById('page1').style.display='block';
+  renderPage1();
+}
+
+function resetAll() {
+  state={step:0,profile:{age:'',goal:'',horizon:'',risk:''},portfolio:{},analysis:null};
+  updateStepBar(0);
+  document.getElementById('page2').style.display='none';
+  document.getElementById('page1').style.display='none';
+  document.getElementById('page0').style.display='block';
+  renderPage0();
+}
+
+// ── INIT ──
+updateStepBar(0);
+renderPage0();
+</script>
+</body>
+</html>
